@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Summarizer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='s.css') }}">
+</head>
+<body>
+    <h1>AI Summarizer App</h1>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul style="color: red;">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <label>Choose input type:</label>
+        <select name="input_type" onchange="updateInputVisibility()">
+            <option value="URL">URL</option>
+            <option value="PDF">PDF</option>
+            <option value="Text">Text</option>
+        </select><br><br>
+
+        <div id="url_input" style="display:none;">
+            <label>Enter URL:</label>
+            <input type="text" name="url">
+        </div>
+
+        <div id="pdf_input" style="display:none;">
+            <label>Upload PDF:</label>
+            <input type="file" name="pdf">
+        </div>
+
+        <div id="text_input" style="display:none;">
+            <label>Enter Text:</label>
+            <textarea name="text" rows="6" cols="60"></textarea>
+        </div>
+
+        <br>
+        <button type="submit">Submit</button>
+        <p></p>
+        <button type="button" onclick="window.location.href='/'">Reset</button>
+    </form>
+
+    {% if extracted_text %}
+        <div class="result-box">
+            <h2>Extracted Content:</h2>
+            <div class="result-content">{{ extracted_text[:2000] }}{% if extracted_text|length > 2000 %}...{% endif %}</div>
+        </div>
+    {% endif %}
+
+    {% if summary %}
+        <div class="result-box">
+            <h2>Summary:</h2>
+            <div class="result-content">{{ summary }}</div>
+        </div>
+    {% endif %}
+
+    <script>
+        function updateInputVisibility() {
+            const type = document.querySelector("select[name='input_type']").value;
+            document.getElementById("url_input").style.display = "none";
+            document.getElementById("pdf_input").style.display = "none";
+            document.getElementById("text_input").style.display = "none";
+
+            if (type === "URL") document.getElementById("url_input").style.display = "block";
+            if (type === "PDF") document.getElementById("pdf_input").style.display = "block";
+            if (type === "Text") document.getElementById("text_input").style.display = "block";
+        }
+
+        window.addEventListener("DOMContentLoaded", updateInputVisibility);
+    </script>
+</body>
+</html>
